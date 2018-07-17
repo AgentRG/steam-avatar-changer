@@ -7,7 +7,7 @@ public class userInformation {
     //Family View PIN if applicable
     static String steamFamilyViewPIN = "";
 
-    //Email login information
+    //Gmail login information
     static String emailUsername = "";
     static String emailPassword = "";
 

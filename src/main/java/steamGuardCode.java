@@ -9,7 +9,6 @@ public class steamGuardCode extends Main {
     private static String steamGuardCode;
 
     public static void getAuthCode() {
-        if(!(driver.findElements(By.xpath(xPathSteam.authCode)).isEmpty())){
             openNewTab();
             gmailURL();
             loginToGmail();
@@ -17,6 +16,16 @@ public class steamGuardCode extends Main {
             logoutFromGmail();
             closeTab();
             typeInAuthCode();
+    }
+
+    public static boolean isAlertPresent() {
+        try {
+            Thread.sleep(500);
+            driver.switchTo().alert();
+            return true;
+        }
+        catch (Exception e) {
+            return false;
         }
     }
 
@@ -33,31 +42,32 @@ public class steamGuardCode extends Main {
     private static void loginToGmail() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.userEmail)));
         WebElement userEmail = driver.findElement(By.xpath(xPathGmail.userEmail));
-        WebElement usernameNext = driver.findElement(By.xpath(xPathGmail.usernameNext));
         userEmail.sendKeys(userInformation.emailUsername);
-        usernameNext.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.usernameNext))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.userPassword)));
         WebElement userPassword = driver.findElement(By.xpath(xPathGmail.userPassword));
         userPassword.sendKeys(userInformation.emailPassword);
-        WebElement passwordNext = driver.findElement(By.xpath(xPathGmail.passwordNext));
-        passwordNext.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.usernameNext))).click();
     }
 
     private static void openSteamMailAndGetCode() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.signOutOptions)));
-        WebElement steamGuardEmail = driver.findElement(By.xpath(xPathGmail.authenticationMail));
-        steamGuardEmail.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.searchMail)));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.authenticationMail)));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.authenticationMail))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.authenticationCode)));
         steamGuardCode = driver.findElement(By.xpath(xPathGmail.authenticationCode)).getText();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.inbox))).click();
     }
 
     private static void logoutFromGmail() {
-        WebElement signOutOptions = driver.findElement(By.xpath(xPathGmail.signOutOptions));
-        signOutOptions.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.signOutOptions))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.signOut)));
-        WebElement signOut = driver.findElement(By.xpath(xPathGmail.signOut));
-        signOut.click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathGmail.userPassword)));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathGmail.signOut))).click();
+        if(isAlertPresent()) {
+            driver.switchTo().alert();
+            driver.switchTo().alert().accept();
+            driver.switchTo().defaultContent();
+        }
     }
 
     private static void closeTab() {

@@ -12,7 +12,6 @@ public class setSteamAvatar extends Main{
         loginScreen();
         enterInformation();
         loginToAccount();
-        steamGuardCode.getAuthCode(); //Will trigger only if Steam Guard is enabled.
         disableFamilyView(); //Will trigger only if Family View is enabled. It will be re-enabled at the end with logout().
         editProfile();
         uploadAvatar();
@@ -42,59 +41,56 @@ public class setSteamAvatar extends Main{
     }
 
     private static void loginToAccount() {
-        WebElement login = driver.findElement(By.xpath(xPathSteam.confirmLogin));
-        login.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.confirmLogin))).click();
+        try {
+            Thread.sleep(5000);
+            if(!(driver.findElements(By.xpath(xPathSteam.authCode)).isEmpty())){
+                steamGuardCode.getAuthCode();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void disableFamilyView() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.userDropdown)));
         if(!(driver.findElements(By.xpath(xPathSteam.disableFamilyView)).isEmpty())) {
-            WebElement disableFamilyView = driver.findElement(By.xpath(xPathSteam.disableFamilyView));
-            disableFamilyView.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.disableFamilyView))).click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.familyViewPINTab)));
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.familyViewPINTab))).click();
             WebElement familyViewPINTab = driver.findElement(By.xpath(xPathSteam.familyViewPINTab));
-            WebElement confirmFamilyViewDisable = driver.findElement(By.xpath(xPathSteam.confirmFamilyViewDisable));
             familyViewPINTab.sendKeys(userInformation.steamFamilyViewPIN);
-            confirmFamilyViewDisable.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.confirmFamilyViewDisable))).click();
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xPathSteam.confirmFamilyViewDisable)));
         }
     }
 
     private static void editProfile() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.userDropdown)));
-        WebElement profileDropdown = driver.findElement(By.xpath(xPathSteam.userDropdown));
-        profileDropdown.click();
-        WebElement viewProfile = driver.findElement(By.xpath(xPathSteam.viewProfile));
-        viewProfile.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.userDropdown))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.viewProfile))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.editProfile)));
-        WebElement editProfile = driver.findElement(By.xpath(xPathSteam.editProfile));
-        editProfile.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.editProfile))).click();
     }
 
     private static void uploadAvatar() {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.uploadButton)));
-        WebElement uploadButton = driver.findElement(By.xpath(xPathSteam.uploadButton));
-        WebElement saveButton = driver.findElement(By.xpath(xPathSteam.saveAvatar));
         driver.findElement(By.xpath(xPathSteam.chooseAvatar)).sendKeys(changeAvatarModes.avatarName);
-        uploadButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.uploadButton))).click();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xPathSteam.uploadButton)));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.uploadButton)));
-        saveButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.saveAvatar))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.confirmSave)));
     }
 
     private static void logout() {
         if(!(driver.findElements(By.xpath(xPathSteam.enableFamilyView)).isEmpty())) {
-            WebElement enableFamilyView = driver.findElement(By.xpath(xPathSteam.enableFamilyView));
-            enableFamilyView.click();
-            WebElement confirmEnableFamilyView = driver.findElement(By.xpath(xPathSteam.confirmFamilyViewEnable));
-            confirmEnableFamilyView.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.enableFamilyView))).click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.confirmFamilyViewEnable))).click();
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.disableFamilyView)));
         }
-        WebElement profileDropdown = driver.findElement(By.xpath(xPathSteam.userDropdown));
-        WebElement logoutButton = driver.findElement(By.xpath(xPathSteam.logoutUser));
-        profileDropdown.click();
-        logoutButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.userDropdown))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xPathSteam.logoutUser))).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xPathSteam.loginButton)));
     }
 }
