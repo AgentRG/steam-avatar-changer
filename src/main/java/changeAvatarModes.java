@@ -13,8 +13,12 @@ public class changeAvatarModes extends Main {
         Random rand = new Random();
         File avatarInteger = avatarArray[rand.nextInt(avatarArray.length)];
         avatarName = avatarInteger.toString();
-
-        setSteamAvatar.changeAvatar();
+        if(avatarName.contains(".png") || avatarName.contains(".jpeg") || avatarName.contains(".png")) {
+            setSteamAvatar.changeAvatar();
+        }
+        else {
+            randomChoice();
+        }
     }
 
     public static void incrementalChoice() throws IOException {
